@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction, nanoid } from '@reduxjs/toolkit'
 import { sub } from 'date-fns'
+
+import { userLoggedOut } from '@/features/auth/authSlice'
 import type { RootState } from '@/app/store'
+import { build } from 'vite'
 
 export type ReactionName = keyof Reactions
 export interface Reactions {
@@ -85,6 +88,11 @@ const postsSlice = createSlice({
         existingPost.reactions[reaction]++
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(userLoggedOut, (state) => {
+      return []
+    })
   },
 })
 
