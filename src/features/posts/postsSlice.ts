@@ -3,6 +3,7 @@ import { client } from '@/api/client'
 
 import { logout } from '@/features/auth/authSlice'
 import type { RootState } from '@/app/store'
+import { AppStartListening, startAppListening } from '@/app/listenerMiddleware'
 import { createAppAsyncThunk } from '@/app/withTypes'
 
 export type ReactionName = keyof Reactions
@@ -122,3 +123,21 @@ export const selectPostsByUser = createSelector(
 
 export const selectPostsStatus = (state: RootState) => state.posts.status
 export const selectPostsError = (state: RootState) => state.posts.error
+
+export const addPostsListeners = (startAppListening: AppStartListening) => {
+  startAppListening({
+    actionCreator: addNewPost.fulfilled,
+    effect: async (action, listenerApi) => {
+      const { toast } = await import('react-tiny-toast')
+
+      const toastId = toast.show('New post added!', {
+        variant: 'success',
+        position: 'bottom-right',
+        pause: true,
+      })
+
+      await listenerApi.delay(5000)
+      toast.remove(toastId)
+    },
+  })
+}
